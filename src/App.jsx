@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
 
 const TaskManagementPetriNet = () => {
   const [tasks, setTasks] = useState([]);
@@ -10,54 +9,108 @@ const TaskManagementPetriNet = () => {
 
   // Configuration du réseau de Petri adapté à la gestion des tâches
   const places = {
-    BACKLOG: { id: 'BACKLOG', x: 100, y: 200, name: 'Backlog', color: 'bg-red-500', hasInitialToken: true },
-    READY: { id: 'READY', x: 250, y: 120, name: 'Prête', color: 'bg-blue-400', hasInitialToken: false },
-    IN_PROGRESS: { id: 'IN_PROGRESS', x: 250, y: 280, name: 'En cours', color: 'bg-green-400', hasInitialToken: false },
-    REVIEW: { id: 'REVIEW', x: 400, y: 120, name: 'Révision', color: 'bg-purple-500', hasInitialToken: false },
-    BLOCKED: { id: 'BLOCKED', x: 400, y: 280, name: 'Bloquée', color: 'bg-orange-500', hasInitialToken: false },
-    DONE: { id: 'DONE', x: 550, y: 120, name: 'Terminée', color: 'bg-yellow-400', hasInitialToken: false },
-    ARCHIVED: { id: 'ARCHIVED', x: 550, y: 280, name: 'Archivée', color: 'bg-pink-400', hasInitialToken: false },
-    DELIVERED: { id: 'DELIVERED', x: 700, y: 200, name: 'Livrée', color: 'bg-indigo-500', hasInitialToken: false }
+    BACKLOG: { id: 'BACKLOG', x: 100, y: 200, name: 'Backlog', color: 'bg-red-500' },
+    READY: { id: 'READY', x: 250, y: 120, name: 'Prête', color: 'bg-blue-400' },
+    IN_PROGRESS: { id: 'IN_PROGRESS', x: 250, y: 280, name: 'En cours', color: 'bg-green-400' },
+    REVIEW: { id: 'REVIEW', x: 400, y: 120, name: 'Révision', color: 'bg-purple-500' },
+    BLOCKED: { id: 'BLOCKED', x: 400, y: 280, name: 'Bloquée', color: 'bg-orange-500' },
+    DONE: { id: 'DONE', x: 550, y: 120, name: 'Terminée', color: 'bg-yellow-400' },
+    ARCHIVED: { id: 'ARCHIVED', x: 550, y: 280, name: 'Archivée', color: 'bg-pink-400' },
+    DELIVERED: { id: 'DELIVERED', x: 700, y: 200, name: 'Livrée', color: 'bg-indigo-500' }
   };
 
   const transitions = [
-    { id: 'PLAN', x: 175, y: 120, name: 'Planifier', inputs: ['BACKLOG'], outputs: ['READY'], condition: 'Préparer la tâche' },
-    { id: 'START', x: 175, y: 200, name: 'Démarrer', inputs: ['READY'], outputs: ['IN_PROGRESS'], condition: 'Commencer le travail' },
-    { id: 'PAUSE', x: 175, y: 280, name: 'Pauser', inputs: ['IN_PROGRESS'], outputs: ['BACKLOG'], condition: 'Mettre en attente' },
-    { id: 'SUBMIT', x: 325, y: 150, name: 'Soumettre', inputs: ['IN_PROGRESS'], outputs: ['REVIEW'], condition: 'Soumettre pour relecture' },
-    { id: 'REJECT', x: 325, y: 250, name: 'Rejeter', inputs: ['REVIEW'], outputs: ['IN_PROGRESS'], condition: 'Retour pour modifications' },
-    { id: 'BLOCK', x: 325, y: 350, name: 'Bloquer', inputs: ['IN_PROGRESS'], outputs: ['BLOCKED'], condition: 'Marquer comme bloquée' },
-    { id: 'UNBLOCK', x: 425, y: 350, name: 'Débloquer', inputs: ['BLOCKED'], outputs: ['IN_PROGRESS'], condition: 'Débloquer la tâche' },
-    { id: 'APPROVE', x: 475, y: 120, name: 'Approuver', inputs: ['REVIEW'], outputs: ['DONE'], condition: 'Approuver comme terminée' },
-    { id: 'ARCHIVE', x: 475, y: 200, name: 'Archiver', inputs: ['DONE'], outputs: ['ARCHIVED'], condition: 'Archivage final' },
-    { id: 'DELIVER', x: 625, y: 200, name: 'Livrer', inputs: ['DONE', 'ARCHIVED'], outputs: ['DELIVERED'], condition: 'Livraison finale' }
+    { 
+      id: 'PLAN', 
+      x: 175, 
+      y: 160, 
+      name: 'Planifier', 
+      inputs: ['BACKLOG'], 
+      outputs: ['READY'], 
+      condition: 'Préparer la tâche' 
+    },
+    { 
+      id: 'START', 
+      x: 250, 
+      y: 200, 
+      name: 'Démarrer', 
+      inputs: ['READY'], 
+      outputs: ['IN_PROGRESS'], 
+      condition: 'Commencer le travail' 
+    },
+    { 
+      id: 'PAUSE', 
+      x: 175, 
+      y: 240, 
+      name: 'Pauser', 
+      inputs: ['IN_PROGRESS'], 
+      outputs: ['BACKLOG'], 
+      condition: 'Mettre en attente' 
+    },
+    { 
+      id: 'SUBMIT', 
+      x: 325, 
+      y: 150, 
+      name: 'Soumettre', 
+      inputs: ['IN_PROGRESS'], 
+      outputs: ['REVIEW'], 
+      condition: 'Soumettre pour relecture' 
+    },
+    { 
+      id: 'REJECT', 
+      x: 325, 
+      y: 200, 
+      name: 'Rejeter', 
+      inputs: ['REVIEW'], 
+      outputs: ['IN_PROGRESS'], 
+      condition: 'Retour pour modifications' 
+    },
+    { 
+      id: 'BLOCK', 
+      x: 325, 
+      y: 330, 
+      name: 'Bloquer', 
+      inputs: ['IN_PROGRESS'], 
+      outputs: ['BLOCKED'], 
+      condition: 'Marquer comme bloquée' 
+    },
+    { 
+      id: 'UNBLOCK', 
+      x: 400, 
+      y: 330, 
+      name: 'Débloquer', 
+      inputs: ['BLOCKED'], 
+      outputs: ['IN_PROGRESS'], 
+      condition: 'Débloquer la tâche' 
+    },
+    { 
+      id: 'APPROVE', 
+      x: 475, 
+      y: 120, 
+      name: 'Approuver', 
+      inputs: ['REVIEW'], 
+      outputs: ['DONE'], 
+      condition: 'Approuver comme terminée' 
+    },
+    { 
+      id: 'ARCHIVE', 
+      x: 550, 
+      y: 200, 
+      name: 'Archiver', 
+      inputs: ['DONE'], 
+      outputs: ['ARCHIVED'], 
+      condition: 'Archivage final' 
+    },
+    { 
+      id: 'DELIVER', 
+      x: 625, 
+      y: 160, 
+      name: 'Livrer', 
+      inputs: ['DONE'], 
+      outputs: ['DELIVERED'], 
+      condition: 'Livraison finale' 
+    }
   ];
-
-  // Initialiser les jetons système
-  useEffect(() => {
-    const initialTokens = [];
-    let tokenId = 1;
-    
-    Object.values(places).forEach(place => {
-      if (place.hasInitialToken) {
-        initialTokens.push({
-          id: tokenId++,
-          taskId: null,
-          taskName: `Jeton système ${place.name}`,
-          currentPlace: place.id,
-          x: place.x,
-          y: place.y,
-          targetX: place.x,
-          targetY: place.y,
-          isAnimating: false,
-          isSystemToken: true
-        });
-      }
-    });
-    
-    setTokens(initialTokens);
-    setNextTokenId(tokenId);
-  }, []);
 
   // Ajouter une nouvelle tâche
   const addTask = () => {
@@ -66,12 +119,11 @@ const TaskManagementPetriNet = () => {
         id: Date.now(),
         name: newTaskName,
         status: 'BACKLOG',
-        createdAt: new Date().toLocaleTimeString(),
-        type: 'user'
+        createdAt: new Date().toLocaleTimeString()
       };
       setTasks(prev => [...prev, newTask]);
       
-      // Créer un jeton pour cette tâche
+      // Créer un jeton pour cette tâche dans le BACKLOG
       const newToken = {
         id: nextTokenId,
         taskId: newTask.id,
@@ -81,8 +133,7 @@ const TaskManagementPetriNet = () => {
         y: places.BACKLOG.y,
         targetX: places.BACKLOG.x,
         targetY: places.BACKLOG.y,
-        isAnimating: false,
-        isSystemToken: false
+        isAnimating: false
       };
       setTokens(prev => [...prev, newToken]);
       setNextTokenId(prev => prev + 1);
@@ -104,7 +155,7 @@ const TaskManagementPetriNet = () => {
     const transition = transitions.find(t => t.id === transitionId);
     if (!transition || !canFireTransition(transition)) return;
 
-    // Trouver les jetons d'entrée
+    // Trouver le premier jeton disponible pour chaque place d'entrée
     const inputTokens = [];
     transition.inputs.forEach(placeId => {
       const token = tokens.find(t => 
@@ -115,62 +166,36 @@ const TaskManagementPetriNet = () => {
 
     if (inputTokens.length !== transition.inputs.length) return;
 
-    // Déplacer les jetons
+    // Ne prendre que le premier jeton pour éviter la duplication
+    const tokenToMove = inputTokens[0];
+    const outputPlace = transition.outputs[0]; // Prendre la première place de sortie
+
+    // Déplacer le jeton
     setTokens(prev => {
-      let newTokens = [...prev];
-      
-      // Déplacer vers la première place de sortie
-      transition.inputs.forEach((placeId, index) => {
-        const tokenIndex = newTokens.findIndex(t => 
-          t.currentPlace === placeId && !t.isAnimating
-        );
-        if (tokenIndex !== -1) {
-          const targetPlace = places[transition.outputs[0]];
-          newTokens[tokenIndex] = {
-            ...newTokens[tokenIndex],
+      return prev.map(token => {
+        if (token.id === tokenToMove.id) {
+          const targetPlace = places[outputPlace];
+          return {
+            ...token,
             targetX: targetPlace.x,
             targetY: targetPlace.y,
             isAnimating: true,
-            currentPlace: transition.outputs[0]
+            currentPlace: outputPlace
           };
         }
+        return token;
       });
-
-      // Créer des jetons supplémentaires si nécessaire
-      if (transition.outputs.length > 1) {
-        for (let i = 1; i < transition.outputs.length; i++) {
-          const outputPlace = places[transition.outputs[i]];
-          const sourceToken = inputTokens[0];
-          newTokens.push({
-            id: nextTokenId + i - 1,
-            taskId: sourceToken.taskId,
-            taskName: sourceToken.taskName,
-            currentPlace: transition.outputs[i],
-            x: outputPlace.x,
-            y: outputPlace.y,
-            targetX: outputPlace.x,
-            targetY: outputPlace.y,
-            isAnimating: false,
-            isSystemToken: sourceToken.isSystemToken
-          });
-        }
-      }
-
-      return newTokens;
     });
 
-    // Mettre à jour le statut des tâches utilisateur
-    if (inputTokens.some(token => !token.isSystemToken)) {
+    // Mettre à jour le statut de la tâche
+    if (tokenToMove.taskId) {
       setTasks(prev => prev.map(task => {
-        const relatedToken = inputTokens.find(token => token.taskId === task.id);
-        if (relatedToken && transition.outputs.length > 0) {
-          return { ...task, status: transition.outputs[0] };
+        if (task.id === tokenToMove.taskId) {
+          return { ...task, status: outputPlace };
         }
         return task;
       }));
     }
-
-    setNextTokenId(prev => prev + (transition.outputs.length > 1 ? transition.outputs.length - 1 : 0));
   };
 
   // Animation des jetons
@@ -183,7 +208,7 @@ const TaskManagementPetriNet = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
           
           if (distance > 2) {
-            const speed = 0.08;
+            const speed = 0.1;
             return {
               ...token,
               x: token.x + dx * speed,
@@ -217,13 +242,21 @@ const TaskManagementPetriNet = () => {
     return tokens.filter(token => token.currentPlace === placeId && !token.isAnimating).length;
   };
 
-  // Filtrer les tâches utilisateur
-  const userTasks = tasks.filter(task => task.type === 'user');
+  // Supprimer une tâche
+  const deleteTask = (taskId) => {
+    setTasks(prev => prev.filter(task => task.id !== taskId));
+    setTokens(prev => prev.filter(token => token.taskId !== taskId));
+  };
+
+  // Obtenir les jetons d'une place spécifique
+  const getTokensInPlace = (placeId) => {
+    return tokens.filter(token => token.currentPlace === placeId && !token.isAnimating);
+  };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Gestion de Tâches avec Réseau de Petri Complexe
+        Gestion de Tâches avec Réseau de Petri
       </h1>
       
       {/* Interface d'ajout de tâches */}
@@ -235,7 +268,7 @@ const TaskManagementPetriNet = () => {
             value={newTaskName}
             onChange={(e) => setNewTaskName(e.target.value)}
             placeholder="Nom de la tâche..."
-            className="flex-1 p-2 border border-gray-300 rounded"
+            className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
             onKeyPress={(e) => e.key === 'Enter' && addTask()}
           />
           <button
@@ -329,8 +362,8 @@ const TaskManagementPetriNet = () => {
                   y={transition.y - 8}
                   width="20"
                   height="16"
-                  fill={canFireTransition(transition) ? "#10B981" : "#374151"}
-                  className="cursor-pointer"
+                  fill={canFireTransition(transition) ? "#10B981" : "#6B7280"}
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => fireTransition(transition.id)}
                 />
                 <text
@@ -352,23 +385,21 @@ const TaskManagementPetriNet = () => {
                 <circle
                   cx={token.x}
                   cy={token.y}
-                  r="6"
-                  fill={token.isSystemToken ? "#000000" : "#EF4444"}
-                  stroke={token.isSystemToken ? "#374151" : "#DC2626"}
+                  r="8"
+                  fill="#000000"
+                  stroke="#374151"
                   strokeWidth="2"
                   className="cursor-pointer"
                 />
-                {!token.isSystemToken && (
-                  <text
-                    x={token.x}
-                    y={token.y + 2}
-                    textAnchor="middle"
-                    className="text-xs font-bold fill-white pointer-events-none"
-                    style={{ fontSize: '8px' }}
-                  >
-                    {token.taskId.toString().slice(-2)}
-                  </text>
-                )}
+                <text
+                  x={token.x}
+                  y={token.y + 3}
+                  textAnchor="middle"
+                  className="text-xs font-bold fill-white pointer-events-none"
+                  style={{ fontSize: '10px' }}
+                >
+                  {token.taskId ? token.taskId.toString().slice(-2) : '●'}
+                </text>
               </g>
             ))}
           </svg>
@@ -376,7 +407,7 @@ const TaskManagementPetriNet = () => {
       </div>
 
       {/* Contrôles des transitions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {transitions.map(transition => (
           <div key={transition.id} className="bg-white p-4 rounded-lg shadow-md">
             <h3 className="font-semibold mb-2">{transition.name}</h3>
@@ -402,24 +433,24 @@ const TaskManagementPetriNet = () => {
 
       {/* État du système */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">État des tâches</h2>
+        <h2 className="text-xl font-semibold mb-4">État des tâches par étape</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.values(places).map(place => {
-            const placeTokens = tokens.filter(t => t.currentPlace === place.id && !t.isAnimating);
+            const placeTokens = getTokensInPlace(place.id);
             return (
               <div key={place.id} className="text-center">
-                <div className={`w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold ${place.color}`}>
-                  {place.name}
+                <div className={`w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-xs ${place.color}`}>
+                  {place.name.slice(0, 8)}
                 </div>
-                <p className="text-sm font-medium">{placeTokens.length} {placeTokens.length <= 1 ? 'jeton' : 'jetons'}</p>
+                <p className="text-sm font-medium">{placeTokens.length} {placeTokens.length <= 1 ? 'tâche' : 'tâches'}</p>
                 <div className="mt-1 max-h-20 overflow-y-auto">
                   {placeTokens.map(token => (
                     <div 
                       key={token.id} 
                       className="text-xs text-gray-600 truncate px-1 py-0.5 hover:bg-gray-100 rounded"
-                      title={token.isSystemToken ? 'Jeton système' : token.taskName}
+                      title={token.taskName}
                     >
-                      {token.isSystemToken ? '● Système' : `● ${token.taskName}`}
+                      ● {token.taskName}
                     </div>
                   ))}
                 </div>
@@ -429,10 +460,10 @@ const TaskManagementPetriNet = () => {
         </div>
       </div>
 
-      {/* Liste des tâches utilisateur */}
-      {userTasks.length > 0 && (
+      {/* Liste des tâches */}
+      {tasks.length > 0 && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Tâches utilisateur</h2>
+          <h2 className="text-xl font-semibold mb-4">Liste des tâches</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -440,11 +471,12 @@ const TaskManagementPetriNet = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crée à</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Créée à</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {userTasks.map(task => (
+                {tasks.map(task => (
                   <tr key={task.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{task.id.toString().slice(-4)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{task.name}</td>
@@ -454,6 +486,14 @@ const TaskManagementPetriNet = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{task.createdAt}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => deleteTask(task.id)}
+                        className="text-red-600 hover:text-red-900 transition-colors"
+                      >
+                        Supprimer
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
